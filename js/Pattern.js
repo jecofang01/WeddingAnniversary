@@ -19,6 +19,7 @@ WA.Pattern.prototype = {
     },
 
     dispose: function(){
+        this._view.removeFromScene(this._container);
         this.dispatchEvent({type:'dispose'});
     }
 };

@@ -7,7 +7,7 @@ WA.TimerPattern = function(view) {
     WA.Pattern.call(this, view);
 
     this.name = "TimerPattern";
-    this._startTime = new Date(2013, 6, 16, 0, 0 ,0 ,0).getTime();
+    this._startTime = new Date('6/16/2013').getTime();
     this._lastDiffDay = 0;
     this._material = new THREE.MeshFaceMaterial( [
         new THREE.MeshLambertMaterial( { color: 0xff0000, shading: THREE.FlatShading, opacity: 0.95 } ),

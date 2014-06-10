@@ -50,6 +50,15 @@ WA.View.prototype = {
         this._scene.remove(obj);
     },
 
+    animate: function() {
+        var _self = this;
+        requestAnimationFrame(function(){
+            _self.animate();
+        });
+
+        _self.update(Date.now());
+    },
+
     update: function(time){
         for(var i = 0; i < this._patterns.length; i++) {
             this._patterns[i].update(time);
@@ -64,5 +73,8 @@ WA.View.prototype = {
     createPattern: function(){
         var patternTimer = new WA.TimerPattern(this);
         this._patterns.push(patternTimer);
+
+        var patternHeart = new WA.HeartPattern(this);
+        this._patterns.push(patternHeart);
     }
 };

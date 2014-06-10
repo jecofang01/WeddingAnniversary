@@ -5,7 +5,7 @@ if(!Detector.webgl) {
 } else {
     var container = document.getElementById('container');
     var view = new WA.View(window.innerWidth, window.innerHeight, container);
-    view.update(Date.now());
+    view.animate();
 
     window.addEventListener("resize", function(){
        view.setSize(window.innerWidth, window.innerHeight);
