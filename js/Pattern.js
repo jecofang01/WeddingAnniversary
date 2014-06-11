@@ -3,8 +3,9 @@
  * Created by fanggjie on 2014/6/9.
  */
 
-WA.Pattern = function(view) {
+WA.Pattern = function(view, textureManager) {
     this._view = view;
+    this._textureManager = textureManager !== undefined? textureManager: undefined;
     this._name = "";
     this._container = new THREE.Object3D();
 

@@ -64,7 +64,7 @@ WA.TextPattern.prototype.__createOrUpdateTextMesh = function(time){
 
         var centerOffsetX = -0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
         var mesh = new THREE.Mesh( geometry, this._material );
-        mesh.position.set(centerOffsetX, 0, -650);
+        mesh.position.set(centerOffsetX, 0, -50);
         this._container.add(mesh);
         this._meshList.push(mesh);
 
@@ -79,7 +79,7 @@ WA.TextPattern.prototype.__createConstTextMesh = function () {
         centerOffsetX = - 0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
         var mesh = new THREE.Mesh(geometry, this._material);
         mesh.name = texts[i];
-        mesh.position.set(centerOffsetX, 0, -650);
+        mesh.position.set(centerOffsetX, 0, -50);
         this._meshList.push(mesh);
         this._container.add(mesh);
     }
@@ -87,8 +87,8 @@ WA.TextPattern.prototype.__createConstTextMesh = function () {
 
 WA.TextPattern.prototype.__createTextGeometry = function (text) {
     var geometry = new THREE.TextGeometry(text, {
-        size: 32,
-        height: 16,
+        size: 72,
+        height: 25,
         curveSegments: 4,
         font: "helvetiker",
 

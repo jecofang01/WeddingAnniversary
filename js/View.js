@@ -8,10 +8,13 @@ WA.View = function(width, height, container){
     this._height = height;
     this._container = container;
 
-    this._camera = new THREE.PerspectiveCamera(45,this._width/this._height, 0.1, 10000);
-    this._camera.position.set(0, 0, 7);
+    this._camera = new THREE.PerspectiveCamera(70,this._width/this._height, 1, 2000);
+    this._camera.position.set(0, 0, 400);
     this._scene = new THREE.Scene();
     this._scene.add(this._camera);
+
+    this._textureManager = new WA.TextureManager();
+    this._textureManager.loadTexture();
 
     this._patterns = [];
     this.createPattern();
@@ -74,7 +77,10 @@ WA.View.prototype = {
         var patternText = new WA.TextPattern(this);
         this._patterns.push(patternText);
 
-        var patternHeart = new WA.HeartPattern(this);
+        var patternHeart = new WA.HeartPattern(this, this._textureManager);
         this._patterns.push(patternHeart);
+
+        var patternBackground = new WA.BackgroundPattern(this, this._textureManager);
+        this._patterns.push(patternBackground);
     }
 };
