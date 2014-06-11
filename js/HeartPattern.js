@@ -18,7 +18,9 @@ WA.HeartPattern = function(view) {
 WA.HeartPattern.prototype = Object.create(WA.Pattern.prototype);
 
 WA.HeartPattern.prototype.update = function(time) {
-    this._activeObjs[0].mesh.position.z += 1;
+    if (this._activeObjs.length === 1) {
+        this._activeObjs[0].mesh.position.z += 1;
+    }
     WA.Pattern.prototype.update.call(this, time);
 };
 

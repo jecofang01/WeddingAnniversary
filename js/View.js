@@ -71,8 +71,8 @@ WA.View.prototype = {
     },
 
     createPattern: function(){
-        var patternTimer = new WA.TimerPattern(this);
-        this._patterns.push(patternTimer);
+        var patternText = new WA.TextPattern(this);
+        this._patterns.push(patternText);
 
         var patternHeart = new WA.HeartPattern(this);
         this._patterns.push(patternHeart);
