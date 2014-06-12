@@ -32,7 +32,7 @@ WA.HeartPattern = function(view, textureManager) {
         }
         var geometry = new THREE.PlaneGeometry(w, h);
         var material = new THREE.MeshBasicMaterial({
-            map: _self._textrues[index]
+            map: texture
         });
         var particle = new THREE.Mesh(geometry, material);
         _self._container.add(particle);
