@@ -28,7 +28,7 @@ WA.BackgroundPattern = function(view, textureManager) {
         "    gl_FragColor.w = opacity;",
         "}"
     ].join("\n");
-    this._LIEFTIME = 5 * 1000;
+    this._LIEFTIME = 20 * 1000;
 
     this._startTime = 0;
 
@@ -39,6 +39,18 @@ WA.BackgroundPattern = function(view, textureManager) {
     });
 
     this._textureArray = this._textureManager.getTextureArray();
+
+    this._material = new THREE.ShaderMaterial({
+        uniforms: {
+            texture: {type: "t", value: 0},
+            opacity: {type: "f", value: 0.5}
+        },
+        vertexShader: this._VERTEX_SHADER,
+        fragmentShader: this._FRAGMENT_SHADER,
+        transparent: true
+    });
+
+    //this._material2 = this._material.clone();
 };
 
 WA.BackgroundPattern.prototype = Object.create(WA.Pattern.prototype);
@@ -48,11 +60,18 @@ WA.BackgroundPattern.prototype.update = function (time) {
         if (this._startTime === 0) {
             this.__createBackgroundMesh(time);
         } else if (time >= (this._LIEFTIME + this._startTime)) {
-            this.dispose();
+            if (this._mesh !== undefined) {
+                this._container.remove(this._mesh);
+                this._mesh.geometry.dispose();
+            }
             this.__createBackgroundMesh(time);
         } else {
-            this._mesh.material.uniforms.opacity.value = this.easeOutSin(time, this._startTime, this._LIEFTIME, 0.5, 0);
+            var v = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1, 0.1);
+            console.log('opacity' + v);
+            this._mesh.material.uniforms.opacity.value = v;
             this._mesh.material.needsUpdate = true;
+            this._mesh.scale.x = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1,  2);
+            this._mesh.scale.y = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1,  2);
         }
     }
 
@@ -64,8 +83,6 @@ WA.BackgroundPattern.prototype.dispose = function(){
         this._container.remove(this._mesh);
         this._mesh.geometry.dispose();
         this._mesh.material.dispose();
-
-        this._startTime = 0;
     }
     WA.Pattern.prototype.dispose.call(this);
 };
@@ -75,34 +92,25 @@ WA.BackgroundPattern.prototype.__createBackgroundMesh = function(time){
     var texture = this._textureArray[index];
     var vW = this._view._width, vH = this._view._height,
         tW = texture.image.width, tH = texture.image.height;
-    var w,h;
-    if (vW >= tW || vH >= tH) {
-        w = tW;
-        h = tH;
-    } else {
-        w = vW;
-        h = tH * tW / vW;
+    var w = tW, h = tH;
+    if (vW < tW && vH < tH) {
+        var aspect = 0;
+        if(tW >= tH){
+            aspect = vW / tW;
+        } else {
+            aspect = vH / tH;
+        }
+        w *= aspect;
+        h *= aspect;
     }
 
     var geometry = new THREE.PlaneGeometry(w, h);
-    var material = new THREE.ShaderMaterial({
-        uniforms: {
-            texture: {type: "t", value: texture},
-            opacity: {type: "f", value: 0.5}
-        },
-        vertexShader: this._VERTEX_SHADER,
-        fragmentShader: this._FRAGMENT_SHADER,
-        transparent: true
-    });
+    this._mesh = new THREE.Mesh(geometry, this._material);
+    this._mesh.position.z = -51;
+    this._material.uniforms.texture.value = texture;
+    this._material.uniforms.opacity.value = 1;
+    this._material.needsUpdate = true;
 
-    this._mesh = new THREE.Mesh(geometry, material);
     this._container.add(this._mesh);
-
     this._startTime = time;
-};
-
-WA.BackgroundPattern.prototype.easeOutSin = function (time, startTime, duration ,startValue, endValue) {
-    var elapsed = time - startTime;
-    var change = endValue - startValue;
-    return change * Math.sin((elapsed / duration * (Math.PI / 2))) + startValue;
 };
