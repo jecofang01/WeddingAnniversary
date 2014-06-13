@@ -17,7 +17,7 @@ WA.HeartPattern = function(view, textureManager) {
     };
     this._textureManager.addEventListener('textureLoaded', onTextureLoaded);
 
-    this.__createHeartShape();
+    this._heartShape = WA.Shape.HeartShape();
 
     var createParticle = function() {
         var index = parseInt(Math.random() * _self._textrues.length);
@@ -53,7 +53,7 @@ WA.HeartPattern = function(view, textureManager) {
 
     };
 
-    var sparksEmitter = new SPARKS.Emitter(new SPARKS.SteadyCounter(60));
+    var sparksEmitter = new SPARKS.Emitter(new SPARKS.SteadyCounter(20));
     sparksEmitter.addInitializer(new SPARKS.Position( new SPARKS.PointZone( _self._emitterpos ) ) );
     sparksEmitter.addInitializer(new SPARKS.Lifetime(3, 5));
     sparksEmitter.addInitializer(new SPARKS.Target(null, createParticle));
@@ -85,18 +85,4 @@ WA.HeartPattern.prototype.update = function(time) {
 WA.HeartPattern.prototype.dispose = function() {
 
     WA.Pattern.prototype.dispose.call(this);
-};
-
-WA.HeartPattern.prototype.__createHeartShape = function (){
-    var x = 0, y = 0, shape;
-    shape = new THREE.Shape();
-    shape.moveTo(x + 25, y + 25);
-    shape.bezierCurveTo( x + 25, y + 25, x + 20, y, x, y );
-    shape.bezierCurveTo( x - 30, y, x - 30, y + 35,x - 30,y + 35 );
-    shape.bezierCurveTo( x - 30, y + 55, x - 10, y + 77, x + 25, y + 95 );
-    shape.bezierCurveTo( x + 60, y + 77, x + 80, y + 55, x + 80, y + 35 );
-    shape.bezierCurveTo( x + 80, y + 35, x + 80, y, x + 50, y );
-    shape.bezierCurveTo( x + 35, y, x + 25, y + 25, x + 25, y + 25 );
-
-    this._heartShape = shape;
 };

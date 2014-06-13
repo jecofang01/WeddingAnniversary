@@ -21,6 +21,7 @@ WA.View = function(width, height, container){
 
     this._renderer = new THREE.WebGLRenderer({antialias: true});
     this._renderer.setSize(this._width, this._height);
+    this._renderer.setClearColor(0xffcccc, 1.0);
 
     this._renderer.domElement.style.position = "absolute";
     this._renderer.domElement.style.top = 0;

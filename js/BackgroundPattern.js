@@ -47,10 +47,9 @@ WA.BackgroundPattern = function(view, textureManager) {
         },
         vertexShader: this._VERTEX_SHADER,
         fragmentShader: this._FRAGMENT_SHADER,
-        transparent: true
+        transparent: true,
+        side: THREE.DoubleSide
     });
-
-    //this._material2 = this._material.clone();
 };
 
 WA.BackgroundPattern.prototype = Object.create(WA.Pattern.prototype);
@@ -66,12 +65,13 @@ WA.BackgroundPattern.prototype.update = function (time) {
             }
             this.__createBackgroundMesh(time);
         } else {
-            var v = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1, 0.1);
-            console.log('opacity' + v);
-            this._mesh.material.uniforms.opacity.value = v;
+            this._mesh.material.uniforms.opacity.value = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1, 0.1);
             this._mesh.material.needsUpdate = true;
-            this._mesh.scale.x = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1,  2);
-            this._mesh.scale.y = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1,  2);
+            var scale = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1,  6);
+            this._mesh.scale.set(scale, scale);
+            var deltaX = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 0, -150);
+            var deltaY = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 25, 280);
+            this._mesh.position.set(deltaX, deltaY, -51);
         }
     }
 
@@ -106,7 +106,7 @@ WA.BackgroundPattern.prototype.__createBackgroundMesh = function(time){
 
     var geometry = new THREE.PlaneGeometry(w, h);
     this._mesh = new THREE.Mesh(geometry, this._material);
-    this._mesh.position.z = -51;
+    this._mesh.position.set(0, 25, -51);
     this._material.uniforms.texture.value = texture;
     this._material.uniforms.opacity.value = 1;
     this._material.needsUpdate = true;
