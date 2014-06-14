@@ -50,28 +50,40 @@ WA.BackgroundPattern = function(view, textureManager) {
         transparent: true,
         side: THREE.DoubleSide
     });
+
+    this._meshArray = [];
+    this._foregroundMesh = null;
 };
 
 WA.BackgroundPattern.prototype = Object.create(WA.Pattern.prototype);
 
 WA.BackgroundPattern.prototype.update = function (time) {
     if (this._textureLoadComplete) {
-        if (this._startTime === 0) {
-            this.__createBackgroundMesh(time);
-        } else if (time >= (this._LIEFTIME + this._startTime)) {
-            if (this._mesh !== undefined) {
-                this._container.remove(this._mesh);
-                this._mesh.geometry.dispose();
-            }
-            this.__createBackgroundMesh(time);
+        if (this._foregroundMesh == null) {
+            var mesh = this.__createBackgroundMesh(time);
+            mesh._startTime = time;
+            this._foregroundMesh = mesh;
         } else {
-            this._mesh.material.uniforms.opacity.value = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1, 0.1);
-            this._mesh.material.needsUpdate = true;
-            var scale = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 1,  6);
-            this._mesh.scale.set(scale, scale);
-            var deltaX = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 0, -150);
-            var deltaY = WA.Easing.Linear(time, this._startTime, this._LIEFTIME, 25, 280);
-            this._mesh.position.set(deltaX, deltaY, -51);
+            if (this._foregroundMesh instanceof THREE.Mesh) {
+                var current = this._foregroundMesh;
+                if (time >= (this._LIEFTIME * 1.5 + current._startTime)) {
+                    var bgMesh = this.__createBackgroundMesh(time);
+                    this._meshArray.push(bgMesh);
+                } else if (time >= (this._LIEFTIME + current._startTime)) {
+                    this._container.remove(current);
+                    current.geometry.dispose();
+                    current.material.dispose();
+                    this._foregroundMesh = this._meshArray.shift();
+                    if (this._foregroundMesh !== undefined) {
+                        this._foregroundMesh._startTime = time;
+                    }
+                } else {
+                    current.material.uniforms.opacity.value = WA.Easing.Linear(time, current._startTime, this._LIEFTIME, 1, 0.5);
+                    current.material.needsUpdate = true;
+                    var scale = WA.Easing.Linear(time, current._startTime, this._LIEFTIME, 1,  2);
+                    current.scale.set(scale, scale);
+                }
+            }
         }
     }
 
@@ -105,12 +117,12 @@ WA.BackgroundPattern.prototype.__createBackgroundMesh = function(time){
     }
 
     var geometry = new THREE.PlaneGeometry(w, h);
-    this._mesh = new THREE.Mesh(geometry, this._material);
-    this._mesh.position.set(0, 25, -51);
-    this._material.uniforms.texture.value = texture;
-    this._material.uniforms.opacity.value = 1;
-    this._material.needsUpdate = true;
+    var mesh = new THREE.Mesh(geometry, this._material.clone());
+    mesh.position.set(0, 25, -51);
+    mesh.material.uniforms.texture.value = texture;
+    mesh.material.uniforms.opacity.value = 0.5;
+    mesh.material.needsUpdate = true;
 
-    this._container.add(this._mesh);
-    this._startTime = time;
+    this._container.add(mesh);
+    return mesh;
 };

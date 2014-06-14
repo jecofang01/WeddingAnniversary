@@ -53,7 +53,7 @@ WA.HeartPattern = function(view, textureManager) {
 
     };
 
-    var sparksEmitter = new SPARKS.Emitter(new SPARKS.SteadyCounter(20));
+    var sparksEmitter = new SPARKS.Emitter(new SPARKS.SteadyCounter(40));
     sparksEmitter.addInitializer(new SPARKS.Position( new SPARKS.PointZone( _self._emitterpos ) ) );
     sparksEmitter.addInitializer(new SPARKS.Lifetime(3, 5));
     sparksEmitter.addInitializer(new SPARKS.Target(null, createParticle));

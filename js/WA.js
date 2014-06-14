@@ -26,10 +26,11 @@ WA.Easing = {
 };
 
 WA.Shape = {
-    HeartShape:function (ratio){
-        ratio = ratio !== undefined? ratio : 1;
-        var x = 0, y = 0, shape;
-        shape = new THREE.Shape();
+    HeartShape:function (ix, iy, iratio){
+        var ratio = iratio !== undefined? iratio : 1;
+        var x = ix !== undefined? ix : 0;
+        var y = iy !== undefined? iy : 0;
+        var shape = new THREE.Shape();
         shape.moveTo(x + 25 * ratio , y + 25 * ratio);
         shape.bezierCurveTo( x + 25 * ratio, y + 25 * ratio, x + 20 * ratio, y, x, y );
         shape.bezierCurveTo( x - 30 * ratio, y, x - 30 * ratio, y + 35 * ratio,x - 30 * ratio,y + 35 * ratio );
