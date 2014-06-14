@@ -43,7 +43,7 @@ WA.BackgroundPattern = function(view, textureManager) {
     this._material = new THREE.ShaderMaterial({
         uniforms: {
             texture: {type: "t", value: 0},
-            opacity: {type: "f", value: 0.5}
+            opacity: {type: "f", value: 1.0}
         },
         vertexShader: this._VERTEX_SHADER,
         fragmentShader: this._FRAGMENT_SHADER,
@@ -51,7 +51,7 @@ WA.BackgroundPattern = function(view, textureManager) {
         side: THREE.DoubleSide
     });
 
-    this._meshArray = [];
+    //this._meshArray = [];
     this._foregroundMesh = null;
 };
 
@@ -66,19 +66,16 @@ WA.BackgroundPattern.prototype.update = function (time) {
         } else {
             if (this._foregroundMesh instanceof THREE.Mesh) {
                 var current = this._foregroundMesh;
-                if (time >= (this._LIEFTIME * 1.5 + current._startTime)) {
-                    var bgMesh = this.__createBackgroundMesh(time);
-                    this._meshArray.push(bgMesh);
-                } else if (time >= (this._LIEFTIME + current._startTime)) {
+                if (time >= (this._LIEFTIME + current._startTime)) {
                     this._container.remove(current);
                     current.geometry.dispose();
                     current.material.dispose();
-                    this._foregroundMesh = this._meshArray.shift();
+                    this._foregroundMesh = this.__createBackgroundMesh(time);
                     if (this._foregroundMesh !== undefined) {
                         this._foregroundMesh._startTime = time;
                     }
                 } else {
-                    current.material.uniforms.opacity.value = WA.Easing.Linear(time, current._startTime, this._LIEFTIME, 1, 0.5);
+                    current.material.uniforms.opacity.value = WA.Easing.Linear(time, current._startTime, this._LIEFTIME, 1, 0.8);
                     current.material.needsUpdate = true;
                     var scale = WA.Easing.Linear(time, current._startTime, this._LIEFTIME, 1,  2);
                     current.scale.set(scale, scale);
@@ -117,10 +114,10 @@ WA.BackgroundPattern.prototype.__createBackgroundMesh = function(time){
     }
 
     var geometry = new THREE.PlaneGeometry(w, h);
-    var mesh = new THREE.Mesh(geometry, this._material.clone());
+    var mesh = new THREE.Mesh(geometry, this._material);
     mesh.position.set(0, 25, -51);
     mesh.material.uniforms.texture.value = texture;
-    mesh.material.uniforms.opacity.value = 0.5;
+    mesh.material.uniforms.opacity.value = 1.0;
     mesh.material.needsUpdate = true;
 
     this._container.add(mesh);
